@@ -28,7 +28,7 @@ pip3 install --no-cache-dir --break-system-packages \
 
 # 创建记忆系统配置
 echo "⚙️  创建配置文件..."
-cat > /data/memory/config.json << 'EOF'
+cat > /data/memory/config.json <<EOF
 {
   "version": "1.0.0",
   "system": "three-tier",
@@ -67,7 +67,7 @@ EOF
 
 # 创建记忆系统集成的 OpenClaw 配置片段
 echo "🔧 生成 OpenClaw 配置..."
-cat > /data/memory/openclaw-memory-config.json << 'EOF'
+cat > /data/memory/openclaw-memory-config.json <<EOF
 {
   "memory": {
     "enabled": true,
@@ -95,7 +95,7 @@ EOF
 
 # 创建系统提示词增强（告诉 AI 如何使用记忆系统）
 echo "📝 创建增强系统提示词..."
-cat > /data/memory/memory-enhanced-prompt.txt << 'EOF'
+cat > /data/memory/memory-enhanced-prompt.txt <<EOF
 # 记忆系统使用指南
 
 你现在拥有一个三层记忆系统来对抗上下文压缩和失忆：
@@ -258,7 +258,7 @@ EOF
 
 # 创建便捷的命令行工具
 echo "🛠️  创建命令行工具..."
-cat > /data/memory/memory-cli.sh << 'EOF'
+cat > /data/memory/memory-cli.sh <<EOF
 #!/bin/bash
 # 记忆系统命令行工具
 
@@ -296,7 +296,7 @@ chmod +x /data/memory/memory-cli.sh
 
 # 创建定时任务配置（cron）
 echo "⏰ 配置定时任务..."
-cat > /data/memory/crontab.txt << 'EOF'
+cat > /data/memory/crontab.txt <<EOF
 # OpenClaw 记忆系统定时任务
 
 # 每 30 分钟执行心跳检查
