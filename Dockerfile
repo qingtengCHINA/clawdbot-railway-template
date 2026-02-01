@@ -47,7 +47,7 @@ RUN apt-get update && apt-get install -y \
 # 升级 pip
 RUN pip3 install --upgrade pip setuptools wheel
 
-# 安装常用 Python 库
+# 1. 先安装通用 Python 库 (使用默认 PyPI 源)
 RUN pip3 install --no-cache-dir \
     # Web 相关
     requests \
@@ -65,8 +65,7 @@ RUN pip3 install --no-cache-dir \
     # 音频处理
     pydub \
     speechrecognition \
-    # AI/ML 基础库
-    torch --index-url https://download.pytorch.org/whl/cpu \
+    # AI/ML 基础库 (Transformers 放这里)
     transformers \
     # 文档处理
     python-docx \
@@ -78,6 +77,9 @@ RUN pip3 install --no-cache-dir \
     colorama \
     tqdm \
     click
+
+# 2. 单独安装 PyTorch (使用 PyTorch 专用源，指定 CPU 版本以减小体积)
+RUN pip3 install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 # 安装 Node.js 全局包
 RUN npm install -g \
