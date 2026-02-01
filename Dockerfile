@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     zip \
     tar \
+    # 格式转换工具（新增，用于修复脚本错误）
+    dos2unix \
     # 多媒体处理
     ffmpeg \
     imagemagick \
@@ -49,59 +51,46 @@ RUN pip3 install --upgrade pip setuptools wheel
 
 # 1. 先安装通用 Python 库 (使用默认 PyPI 源)
 RUN pip3 install --no-cache-dir \
-    # Web 相关
     requests \
     beautifulsoup4 \
     scrapy \
     selenium \
-    # 数据处理
     pandas \
     numpy \
     openpyxl \
     xlrd \
-    # 图像处理
     pillow \
     opencv-python-headless \
-    # 音频处理
     pydub \
     speechrecognition \
-    # AI/ML 基础库 (Transformers 放这里)
     transformers \
-    # 文档处理
     python-docx \
     pypdf2 \
     markdown \
-    # 工具库
     python-dotenv \
     pyyaml \
     colorama \
     tqdm \
     click
 
-# 2. 单独安装 PyTorch (使用 PyTorch 专用源，指定 CPU 版本以减小体积)
+# 2. 单独安装 PyTorch
 RUN pip3 install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 # 安装 Node.js 全局包
 RUN npm install -g \
-    # 文件处理
     sharp \
     jimp \
-    # 网络请求
     axios \
     node-fetch \
-    # 工具
     pm2 \
     nodemon \
-    # 音频/视频
     fluent-ffmpeg
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 package.json 和 package-lock.json
+# 复制 package.json
 COPY package*.json ./
-
-# 安装项目依赖
 RUN npm ci --only=production
 
 # 复制项目文件
@@ -109,18 +98,15 @@ COPY . .
 
 # 创建必要的目录
 RUN mkdir -p /data/.openclaw /data/workspace /data/skills /data/tools
-
-# 设置权限
 RUN chmod -R 755 /data
 
-# 复制技能安装脚本
-COPY scripts/install-skills.sh /app/scripts/
-RUN chmod +x /app/scripts/install-skills.sh
+# 修复并设置脚本权限
+# 注意：这里增加了 dos2unix 命令，自动修复 Windows 换行符问题
+RUN find scripts -name "*.sh" -exec dos2unix {} \; && \
+    chmod +x scripts/*.sh
 
-# 复制记忆系统
-COPY memory_system.py /app/
-COPY scripts/install-memory-system.sh /app/scripts/
-RUN chmod +x /app/scripts/install-memory-system.sh
+# 如果根目录下也有 memory_system.py，确保它被复制（COPY . . 已经包含，这里是保险起见）
+# 只需要确保 install-memory-system.sh 能被找到
 
 # 暴露端口
 EXPOSE 8080
